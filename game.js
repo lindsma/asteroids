@@ -1,7 +1,18 @@
 (function gameSetup() {
     'use strict';
-
+    // var asteroidElem = event.detail;
     var shipElem = document.getElementById('ship');
+
+    var ship = {
+      velocity: 0,
+      angle: 0,
+      element: shipElem,
+      top: 0,
+      left: 0
+    }
+
+    var shipsCurrentAngle = ship.angle;
+    var shipsCurrentVelocity = ship.velocity;
 
     // Create your "ship" object and any other variables you might need...
 
@@ -13,25 +24,42 @@
 
         // What might you need/want to do in here?
 
+        if ("asteroidDetected") {
+          allAsteroids.push(event.detail);
+        }
     });
 
     /**
      * Use this function to handle when a key is pressed. Which key? Use the
      * event.keyCode property to know:
      *
-     * 37 = left
-     * 38 = up
-     * 39 = right
-     * 40 = down
+     * 37 = left   rotate -25deg
+     * 38 = up += 10px
+     * 39 = right  rotate 25deg
+     * 40 = down -= 10px
      *
      * @param  {Event} event   The "keyup" event object with a bunch of data in it
      * @return {void}          In other words, no need to return anything
      */
     function handleKeys(event) {
         console.log(event.keyCode);
-
+        if (event.keyCode === 37) {
+          shipsCurrentAngle = ship.angle -= 5;
+          console.log(shipsCurrentAngle);
+        }
+        else if (event.keyCode === 38) {
+          shipsCurrentVelocity = ship.velocity += 1;
+        }
+        else if (event.keyCode === 39) {
+          shipsCurrentAngle = ship.angle += 5;
+        }
+        else if (event.keyCode === 40) {
+          shipsCurrentVelocity = ship.velocity -= 1;
+        } else {
+          console.log("Not a valid key!");
+        }
         // Implement me!
-
+        getShipMovement(shipsCurrentVelocity, shipsCurrentAngle);
     }
     document.querySelector('body').addEventListener('keyup', handleKeys);
 
@@ -47,15 +75,23 @@
         // This function for getting ship movement is given to you (at the bottom).
         // NOTE: you will need to change these arguments to match your ship object!
         // What does this function return? What will be in the `move` variable?
-        // Read the documentation!
-        var move = getShipMovement(shipsCurrentVelocity, shipsCurrentAngle);
+        // Read the documentation! continuously looking for updated values
+      var move = getShipMovement(shipsCurrentVelocity, shipsCurrentAngle);
 
+      ship.top += move.top;
+      ship.left += move.left;
 
+      var moveTop = (String(-ship.top) + "px");
+      var moveLeft = (String(ship.left) + "px");
+
+      var changeAngle = "rotate(" + String(shipsCurrentAngle) + "deg)";
         // Move the ship here!
-
-
+        ship.element.style.top = moveTop;
+        ship.element.style.left = moveLeft;
+        ship.element.style.transform = changeAngle;
         // Time to check for any collisions (see below)...
         checkForCollisions();
+
     }
 
     /**
@@ -73,9 +109,12 @@
      * @return void
      */
     function checkForCollisions() {
-
-        // Implement me!
-
+      // Implement me!
+      for (var check = 0; check < allAsteroids.length; check++) {
+        if (ship.element.getBoundingClientRect().bottom > allAsteroids[check].getBoundingClientRect().top && ship.element.getBoundingClientRect().top < allAsteroids[check].getBoundingClientRect().bottom && ship.element.getBoundingClientRect().right > allAsteroids[check].getBoundingClientRect().left && ship.element.getBoundingClientRect().left < allAsteroids[check].getBoundingClientRect().right) {
+          crash(allAsteroids[check]);
+        }
+      }
     }
 
 
@@ -86,6 +125,8 @@
      */
     document.querySelector('main').addEventListener('crash', function () {
         console.log('A crash occurred!');
+
+        alert("You Lose!");
 
         // What might you need/want to do in here?
 
