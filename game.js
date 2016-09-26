@@ -1,6 +1,6 @@
 (function gameSetup() {
     'use strict';
-    // var asteroidElem = event.detail;
+
     var shipElem = document.getElementById('ship');
 
     var ship = {
@@ -76,6 +76,7 @@
         // NOTE: you will need to change these arguments to match your ship object!
         // What does this function return? What will be in the `move` variable?
         // Read the documentation! continuously looking for updated values
+
       var move = getShipMovement(shipsCurrentVelocity, shipsCurrentAngle);
 
       ship.top += move.top;
@@ -127,6 +128,7 @@
         console.log('A crash occurred!');
 
         alert("You Lose!");
+        clearInterval (loopHandle);
 
         // What might you need/want to do in here?
 
